@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document("article")
 public class Article {
@@ -12,26 +14,46 @@ public class Article {
 	@Id
 	private String id;
 	
+	@Field
 	private String title;
+	
+	@Field
+	@Indexed(unique = true)
 	private String srcUrl;
+	
+	@Field
 	private String baseUrl;
+	
+	@Field
 	private String slug;
 
-
+	@Field
 	private String fullcontent;
+	
+	@Field
 	private Date publishAt;
+	
+	@Field
 	private String featureImgUrl;
+	
+	@Field
 	private String cate;
+	
+	@Field
 	private List<String> tags;
 
 	public Article() {
 		tags = new ArrayList<String>();
 	}
 
+
 	@Override
 	public String toString() {
-		return String.format("Article[srcUrl='%s', title='%s']", srcUrl, title);
+		return "Article [id=" + id + ", title=" + title + ", srcUrl=" + srcUrl + ", baseUrl=" + baseUrl + ", slug="
+				+ slug + ", fullcontent=" + fullcontent + ", publishAt=" + publishAt + ", featureImgUrl="
+				+ featureImgUrl + ", cate=" + cate + ", tags=" + tags + "]";
 	}
+
 
 	public String getFullcontent() {
 		return fullcontent;

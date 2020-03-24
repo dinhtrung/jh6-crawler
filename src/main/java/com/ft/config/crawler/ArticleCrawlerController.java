@@ -95,6 +95,6 @@ public class ArticleCrawlerController {
 		 * Start the crawl. This is a blocking operation, meaning that your code
 		 * will reach the line after this only when crawling is finished.
 		 */
-		controller.start(ArticleCrawler.class, cfp.getNumberOfCrawlers());
+		controller.startNonBlocking(ArticleCrawler.class, cfp.getNumberOfCrawlers());
 	}
 }

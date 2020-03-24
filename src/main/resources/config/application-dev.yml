@@ -131,19 +131,19 @@ jhipster:
 crawler:
   threads: 1
   storage-path: /tmp/crawler
-  max-pages: 10
+  max-pages: 1000
   delay: 1000
-  depth: 2
-  seed-pages: http://www.blogphongthuy.com/cat/am-duong-tap-luan/xem-tu-vi-tu-vi/tu-vi-phuong-tay-12-cung
+  depth: 5
+  seed-pages: http://nguoihanoi.com.vn/
 
 ## How to extract the data
 parser:
-  urlRegexp: http://www.blogphongthuy.com/tu-vi-hang-ngay
+  urlRegexp: http://nguoihanoi.com.vn/
   uri: \\/([\\w_\\-]+).html
-  title-selector: "#content .post h1.title"
-  body-selector: "#content .entry p:nth-child(1n+3)"
+  title-selector: "h1"
+  body-selector: ".detail-post"
   time-selector: "#content .post h1.title"
   img-selector: "#content .entry img"
   dateFmt: "dd/MM/yyyy"
-  main-category: "tuvi"
-  tag-selector: ".meta_categories"
+  main-category: "nguoihanoi"
+  tag-selector: "a.itags"

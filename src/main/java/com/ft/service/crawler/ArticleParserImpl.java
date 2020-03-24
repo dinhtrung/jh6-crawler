@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,10 +20,16 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ft.config.Constants;
 import com.ft.domain.Article;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IQueue;
 
 @Service
 public class ArticleParserImpl {
@@ -31,9 +38,19 @@ public class ArticleParserImpl {
 
 	public static List<String> visitedUrl = Collections.synchronizedList(new ArrayList<String>());
 
+	@Autowired
+	HazelcastInstance hazelcastInstance;
+	
+	@Autowired
+	ObjectMapper objectMapper;
+	
+	private static ArticleParserImpl articleParser;
+	public static ArticleParserImpl getInstance() {
+		return articleParser;
+	}
+	
 	@PostConstruct
 	private void load() {
-		articleParser = this;
 		logger.info("Article Parser Started...");
 		logger.info("===== REGEXP: " + urlRegexp + " ==== CATE: " + category);
 		logger.info("== Gotta grep Title attribute from " + titleSelector);
@@ -47,6 +64,7 @@ public class ArticleParserImpl {
 
 		uriPattern = Pattern.compile(uriRegexp);
 		logger.info("== Article URI format: " + uriRegexp + " == Pattern " + uriPattern.pattern());
+		articleParser = this;
 	}
 
 	@Value("${parser.title-selector: .leftCol h1}")
@@ -193,8 +211,17 @@ public class ArticleParserImpl {
 				}
 			}
 			// Save the entity and we are done
-			logger.debug("Saving data crawled for URL: " + entity.getSrcUrl() + " --> " + entity.getTitle());
-			logger.info(entity.toString());
+			logger.debug("+ Saving data crawled for URL: {} | {}", entity.getSrcUrl(), entity.getTitle());
+			
+			try {
+				IQueue<String> articleQueue = hazelcastInstance.getQueue(Constants.ARTICLE_QUEUE);
+				articleQueue.put(objectMapper.writeValueAsString(entity));
+				logger.debug("* Saving data crawled for URL: {} | {}", entity.getSrcUrl(), entity.getTitle());
+			} catch (JsonProcessingException | InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			return true;
 		}
 		return false;
 	}
@@ -288,8 +315,4 @@ public class ArticleParserImpl {
 		this.tagSelector = tagSelector;
 	}
 
-	private static ArticleParserImpl articleParser;
-	public static ArticleParserImpl getInstance() {
-		return articleParser;
-	}
 }
