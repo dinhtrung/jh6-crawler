@@ -3,15 +3,12 @@ package com.ft.web.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.server.ResponseStatusException;
+
+import com.ft.service.crawler.CrawlerService;
 
 
 @Controller
@@ -19,6 +16,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class CrawlerManagementResource {
 
 	private final Logger log = LoggerFactory.getLogger(CrawlerManagementResource.class);
+	
+	@Autowired
+	CrawlerService crawlerService;
+	
+	@GetMapping("/start-crawler")
+	public ResponseEntity<String> startCampaign() throws Exception {
+		crawlerService.startCrawler();
+		return ResponseEntity.accepted().body("OK");
+	}
 //	
 //	@GetMapping("/import-campaign/{id}")
 //	public ResponseEntity<Void> importCampaign(@PathVariable String id) throws Exception {
@@ -46,11 +52,7 @@ public class CrawlerManagementResource {
 //		return ResponseEntity.ok(null);
 //	}
 //	
-//	@GetMapping("/start-campaign/{id}")
-//	public ResponseEntity<Campaign> startCampaign(@PathVariable String id) throws Exception {
-//		Campaign campaign = campaignRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-//		return ResponseEntity.accepted().body(campaignProcessorService.startCampaign(campaign));
-//	}
+
 //	
 //	@GetMapping("/stop-campaign/{id}")
 //	public ResponseEntity<Campaign> stopCampaign(@PathVariable String id) throws Exception {

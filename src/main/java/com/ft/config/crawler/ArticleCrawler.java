@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 public class ArticleCrawler extends WebCrawler {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(ArticleCrawler.class);
+	
 	private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
 
 	/**

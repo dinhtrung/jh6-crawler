@@ -70,6 +70,11 @@ public class Article {
 	public void setSrcUrl(String srcUrl) {
 		this.srcUrl = srcUrl;
 	}
+	
+	public Article srcUrl(String srcUrl) {
+		this.srcUrl = srcUrl;
+		return this;
+	}
 
 	public String getTitle() {
 		return title;
@@ -134,6 +139,4 @@ public class Article {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	
 }

@@ -43,8 +43,7 @@ management:
         include: ['configprops', 'env', 'health', 'info', 'jhimetrics', 'logfile', 'loggers', 'prometheus', 'threaddump']
   endpoint:
     health:
-      show-details: when_authorized
-      roles: 'ROLE_ADMIN'
+      show-details: always
     jhimetrics:
       enabled: true
   info:
@@ -80,13 +79,13 @@ management:
 
 spring:
   application:
-    name: CrawlerApplication
+    name: readTheNews
   cloud:
     consul:
       discovery:
         healthCheckPath: /management/health
-        instanceId: crawlerapplication:${spring.application.instance-id:${random.value}}
-        service-name: crawlerapplication
+        instanceId: news:${spring.application.instance-id:${random.value}}
+        service-name: news
       config:
         watch:
           enabled: false
@@ -135,7 +134,7 @@ info:
 
 jhipster:
   clientApp:
-    name: 'crawlerApplicationApp'
+    name: 'readTheNews'
   # By default CORS is disabled. Uncomment to enable.
   # cors:
   #     allowed-origins: "*"
@@ -148,8 +147,8 @@ jhipster:
     from: CrawlerApplication@localhost
   swagger:
     default-include-pattern: /api/.*
-    title: CrawlerApplication API
-    description: CrawlerApplication API documentation
+    title: Read The News API
+    description: Read The News API documentation
     version: 0.0.1
     terms-of-service-url:
     contact-name:

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,14 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ft.config.Constants;
 import com.ft.domain.Article;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IQueue;
+import com.ft.repository.ArticleRepository;
 
 @Service
 public class ArticleParserImpl {
@@ -39,12 +35,10 @@ public class ArticleParserImpl {
 	public static List<String> visitedUrl = Collections.synchronizedList(new ArrayList<String>());
 
 	@Autowired
-	HazelcastInstance hazelcastInstance;
-	
-	@Autowired
-	ObjectMapper objectMapper;
+	ArticleRepository articleRepository;
 	
 	private static ArticleParserImpl articleParser;
+	
 	public static ArticleParserImpl getInstance() {
 		return articleParser;
 	}
@@ -214,14 +208,12 @@ public class ArticleParserImpl {
 			logger.debug("+ Saving data crawled for URL: {} | {}", entity.getSrcUrl(), entity.getTitle());
 			
 			try {
-				IQueue<String> articleQueue = hazelcastInstance.getQueue(Constants.ARTICLE_QUEUE);
-				articleQueue.put(objectMapper.writeValueAsString(entity));
+				articleRepository.save(entity);
 				logger.debug("* Saving data crawled for URL: {} | {}", entity.getSrcUrl(), entity.getTitle());
-			} catch (JsonProcessingException | InterruptedException e) {
-				e.printStackTrace();
+				return true;
+			} catch (Exception e) {
+				logger.error("Cannot save article: {}", entity, e);
 			}
-			
-			return true;
 		}
 		return false;
 	}
@@ -232,7 +224,7 @@ public class ArticleParserImpl {
 	}
 
 	public boolean shouldGrab(String url) {
-		return (url.startsWith(urlRegexp) && (!visitedUrl.contains(url)));
+		return (url.startsWith(urlRegexp) && articleRepository.findOne(Example.of(new Article().srcUrl(url))).isPresent());
 	}
 
 	public String getUrlRegexp() {
