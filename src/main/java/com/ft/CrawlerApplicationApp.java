@@ -1,6 +1,8 @@
 package com.ft;
 
 import com.ft.config.ApplicationProperties;
+import com.ft.config.crawler.CrawlerProperties;
+
 import io.github.jhipster.config.DefaultProfileUtil;
 import io.github.jhipster.config.JHipsterConstants;
 import java.net.InetAddress;
@@ -18,7 +20,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.core.env.Environment;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ ApplicationProperties.class })
+@EnableConfigurationProperties({ ApplicationProperties.class, CrawlerProperties.class })
 @EnableDiscoveryClient
 public class CrawlerApplicationApp {
     private static final Logger log = LoggerFactory.getLogger(CrawlerApplicationApp.class);

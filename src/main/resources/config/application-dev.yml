@@ -125,3 +125,25 @@ jhipster:
 # ===================================================================
 
 # application:
+
+
+##### HOHUY CRAWLER DATA GOES HERE ##################
+crawler:
+  threads: 1
+  storage-path: /tmp/crawler
+  max-pages: 10
+  delay: 1000
+  depth: 2
+  seed-pages: http://www.blogphongthuy.com/cat/am-duong-tap-luan/xem-tu-vi-tu-vi/tu-vi-phuong-tay-12-cung
+
+## How to extract the data
+parser:
+  urlRegexp: http://www.blogphongthuy.com/tu-vi-hang-ngay
+  uri: \\/([\\w_\\-]+).html
+  title-selector: "#content .post h1.title"
+  body-selector: "#content .entry p:nth-child(1n+3)"
+  time-selector: "#content .post h1.title"
+  img-selector: "#content .entry img"
+  dateFmt: "dd/MM/yyyy"
+  main-category: "tuvi"
+  tag-selector: ".meta_categories"
