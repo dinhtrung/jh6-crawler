@@ -1,0 +1,21 @@
+##### HOHUY CRAWLER DATA GOES HERE ##################
+crawler:
+  threads: 20
+  storage-path: /tmp/crawler
+  max-pages: 1000
+  delay: 1000
+  depth: 2
+  seed-pages: https://vov.vn/khoi-nghiep/
+
+## How to extract the data
+parser:
+  urlRegexp: http://nguoihanoi.com.vn/
+  uri: \\/([\\w_\\-]+).html
+  title-selector: ".vov-content h1"
+  body-selector: "#article-body"
+  time-selector: ".vov-content time"
+  img-selector: "#article-body img"
+  dateFmt: "dd/MM/yyyy"
+  main-category: "khoi-nghiep"
+  tag-selector: ".meta_categories"
+  uri: "\\/([\\w_\\-]+).vov"

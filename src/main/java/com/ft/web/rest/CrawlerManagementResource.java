@@ -3,11 +3,16 @@ package com.ft.web.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.ft.domain.CrawlerSettings;
+import com.ft.repository.CrawlerSettingsRepository;
 import com.ft.service.crawler.CrawlerService;
 
 
@@ -20,18 +25,27 @@ public class CrawlerManagementResource {
 	@Autowired
 	CrawlerService crawlerService;
 	
+	@Autowired
+	CrawlerSettingsRepository crawlerSettingsRepo;
+	
 	@GetMapping("/start-crawler")
-	public ResponseEntity<String> startCampaign() throws Exception {
+	public ResponseEntity<String> startCrawler() throws Exception {
 		crawlerService.startCrawler();
 		return ResponseEntity.accepted().body("OK");
 	}
-//	
-//	@GetMapping("/import-campaign/{id}")
-//	public ResponseEntity<Void> importCampaign(@PathVariable String id) throws Exception {
-//		Campaign campaign = campaignRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-//		fileImportService.importDataSource(campaign);
-//		return ResponseEntity.accepted().body(null);
-//	}
+	
+	@GetMapping("/start-crawler/{id}")
+	public ResponseEntity<String> startCrawlerById(@PathVariable String id) throws Exception {
+		CrawlerSettings settings = crawlerSettingsRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		crawlerService.doStartCrawler(settings);
+		return ResponseEntity.accepted().body("OK");
+	}
+	
+	@GetMapping("/metrics/increase/{id}")
+	public ResponseEntity<Void> importCampaign() throws Exception {
+		
+		return ResponseEntity.accepted().body(null);
+	}
 //	
 //	@GetMapping("/archive-campaign/{id}")
 //	public ResponseEntity<Void> archiveCampaign(@PathVariable String id) throws Exception {

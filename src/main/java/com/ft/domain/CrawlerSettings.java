@@ -2,7 +2,9 @@ package com.ft.domain;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -19,11 +21,38 @@ public class CrawlerSettings {
 	@Field
 	private int state = 0;
 	
-	@Field
+	@Field("crawler_cnt")
 	private int numberOfCrawlers = 1;
 	
-	@Field
+	@Field("seed_pages")
 	private Set<String> seedPages = new HashSet<>();
+	
+	@Field("title_selector")
+	private String titleSelector = "h1:first-child";
+
+	@Field("content_selector")
+	private String fullcontentSelector = "main";
+
+	@Field("time_selector")
+	private String timeSelector = "date";
+
+	@Field("img_selector")
+	private String imgSelector = "img:first-child";
+
+	@Field("url_regexp")
+	private String urlRegexp;
+
+	@Field("category")
+	private String category;
+
+	@Field("tag_selector")
+	private String tagSelector = ".badge";
+
+	@Field("uri_regexp")
+	private String uriRegexp;
+
+	@Field("date_format")
+	private String dateFmt = "yyyy-MM-dd";
 	
 	/**
      * The folder which will be used by crawler for storing the intermediate
@@ -383,6 +412,91 @@ public class CrawlerSettings {
 	public int getNumberOfCrawlers() {
 		return numberOfCrawlers ;
 	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public String getTitleSelector() {
+		return titleSelector;
+	}
+
+	public void setTitleSelector(String titleSelector) {
+		this.titleSelector = titleSelector;
+	}
+
+	public String getFullcontentSelector() {
+		return fullcontentSelector;
+	}
+
+	public void setFullcontentSelector(String fullcontentSelector) {
+		this.fullcontentSelector = fullcontentSelector;
+	}
+
+	public String getTimeSelector() {
+		return timeSelector;
+	}
+
+	public void setTimeSelector(String timeSelector) {
+		this.timeSelector = timeSelector;
+	}
+
+	public String getImgSelector() {
+		return imgSelector;
+	}
+
+	public void setImgSelector(String imgSelector) {
+		this.imgSelector = imgSelector;
+	}
+
+	public String getUrlRegexp() {
+		return urlRegexp;
+	}
+
+	public void setUrlRegexp(String urlRegexp) {
+		this.urlRegexp = urlRegexp;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getTagSelector() {
+		return tagSelector;
+	}
+
+	public void setTagSelector(String tagSelector) {
+		this.tagSelector = tagSelector;
+	}
+
+	public String getUriRegexp() {
+		return uriRegexp;
+	}
+
+	public void setUriRegexp(String uriRegexp) {
+		this.uriRegexp = uriRegexp;
+	}
+
+	public String getDateFmt() {
+		return dateFmt;
+	}
+
+	public void setDateFmt(String dateFmt) {
+		this.dateFmt = dateFmt;
+	}
+
+	public void setNumberOfCrawlers(int numberOfCrawlers) {
+		this.numberOfCrawlers = numberOfCrawlers;
+	}
+
 	
 	
 	
