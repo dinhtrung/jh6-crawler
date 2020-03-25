@@ -35,10 +35,10 @@ public class CrawlerManagementResource {
 	}
 	
 	@GetMapping("/start-crawler/{id}")
-	public ResponseEntity<String> startCrawlerById(@PathVariable String id) throws Exception {
+	public ResponseEntity<CrawlerSettings> startCrawlerById(@PathVariable String id) throws Exception {
 		CrawlerSettings settings = crawlerSettingsRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		crawlerService.doStartCrawler(settings);
-		return ResponseEntity.accepted().body("OK");
+		return ResponseEntity.accepted().body(settings);
 	}
 	
 	@GetMapping("/metrics/increase/{id}")

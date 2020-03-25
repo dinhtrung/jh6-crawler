@@ -59,7 +59,7 @@ public class ArticleParser extends WebCrawler {
 		}
 		// Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is
 		// "http".
-		return shouldGrab(url.getURL());
+		return this.shouldGrab(url.getURL());
 	}
 
 	/**
@@ -160,14 +160,17 @@ public class ArticleParser extends WebCrawler {
 			entity.setTitle(title);
 
 			// Set slug
-			Pattern uriPattern = Pattern.compile(settings.getUriRegexp());
-			
-			Matcher m = uriPattern.matcher(srcUrl);
-			if (m.find()) {
-				entity.setSlug(m.group(m.groupCount()));
-			} else {
+			if (settings.getUriRegexp() != null) {
+				Pattern uriPattern = Pattern.compile(settings.getUriRegexp());
+				Matcher m = uriPattern.matcher(srcUrl);
+				if (m.find()) {
+					entity.setSlug(m.group(m.groupCount()));
+				}
+			}
+			if (entity.getSlug() == null) {
 				entity.setSlug(title.toLowerCase().replaceAll("^[a-z0-9\\-]", ""));
 			}
+			
 
 			// Full content
 			Elements fulltext_content = doc.select(settings.getFullcontentSelector());
@@ -180,34 +183,36 @@ public class ArticleParser extends WebCrawler {
 			}
 
 			// Set publish time
-			Elements time = doc.select(settings.getTimeSelector());
-			Pattern hourPattern = Pattern.compile(settings.getDateFmt());
-			Pattern datePattern = Pattern.compile(settings.getDateFmt());
-			if (!time.isEmpty()) {
-				String timeString = time.get(0).html();
-				logger.info("Found a time string: " + timeString);
-				SimpleDateFormat fmt = new SimpleDateFormat(settings.getDateFmt() + " hh:mm");
-				try {
-					Matcher hourMatcher = hourPattern.matcher(timeString);
-					Matcher dateMatcher = datePattern.matcher(timeString);
-
-					if (dateMatcher.find()) {
-						if (hourMatcher.find()) {
-							String normalizedTimeString = dateMatcher.group() + " " + hourMatcher.group();
-							logger.info("Found normallized timeString: () -- parse with format: {} hh:mm", normalizedTimeString, settings.getDateFmt());
-							entity.setPublishAt(fmt.parse(normalizedTimeString));
+			if (settings.getTimeSelector() != null) {
+				Elements time = doc.select(settings.getTimeSelector());
+				Pattern hourPattern = Pattern.compile(settings.getDateFmt());
+				Pattern datePattern = Pattern.compile(settings.getDateFmt());
+				if (!time.isEmpty()) {
+					String timeString = time.get(0).html();
+					logger.info("Found a time string: " + timeString);
+					SimpleDateFormat fmt = new SimpleDateFormat(settings.getDateFmt() + " hh:mm");
+					try {
+						Matcher hourMatcher = hourPattern.matcher(timeString);
+						Matcher dateMatcher = datePattern.matcher(timeString);
+	
+						if (dateMatcher.find()) {
+							if (hourMatcher.find()) {
+								String normalizedTimeString = dateMatcher.group() + " " + hourMatcher.group();
+								logger.info("Found normallized timeString: () -- parse with format: {} hh:mm", normalizedTimeString, settings.getDateFmt());
+								entity.setPublishAt(fmt.parse(normalizedTimeString));
+							} else {
+								String normalizedTimeString = dateMatcher.group() + " 00:00";
+								logger.info("Found normallized timeString: () -- parse with format: {} 00:00", normalizedTimeString, settings.getDateFmt());
+								entity.setPublishAt(fmt.parse(dateMatcher.group() + " 00:00"));
+							}
 						} else {
-							String normalizedTimeString = dateMatcher.group() + " 00:00";
-							logger.info("Found normallized timeString: () -- parse with format: {} 00:00", normalizedTimeString, settings.getDateFmt());
-							entity.setPublishAt(fmt.parse(dateMatcher.group() + " 00:00"));
+							logger.error("Cannot find any date time value with timeString. Please check your configuration..");
 						}
-					} else {
-						logger.error("Cannot find any date time value with timeString. Please check your configuration..");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						logger.error("Cannot parse date string" + timeString);
+						entity.setPublishAt(new Date());
 					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					logger.error("Cannot parse date string" + timeString);
-					entity.setPublishAt(new Date());
 				}
 			}
 			// Feature Images
@@ -254,7 +259,7 @@ public class ArticleParser extends WebCrawler {
 	}
 
 	public boolean shouldGrab(String url) {
-		return (url.startsWith(settings.getUrlRegexp()) && articleRepository.findOne(Example.of(new Article().srcUrl(url))).isPresent());
+		return !articleRepository.findOne(Example.of(new Article().srcUrl(url))).isPresent();
 	}
 
 	public CrawlerSettings getSettings() {
@@ -264,4 +269,11 @@ public class ArticleParser extends WebCrawler {
 	public void setSettings(CrawlerSettings settings) {
 		this.settings = settings;
 	}
+
+	@Override
+	public String toString() {
+		return "ArticleParser [settings=" + settings + "]";
+	}
+	
+	
 }

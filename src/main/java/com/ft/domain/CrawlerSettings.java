@@ -183,9 +183,16 @@ public class CrawlerSettings {
      */
     private boolean respectNoIndex = true;
 
+
+    
+    
 	@Override
 	public String toString() {
-		return "CrawlerSettings [name=" + name + ", seedPages=" + seedPages + "]";
+		return "CrawlerSettings [name=" + name + ", numberOfCrawlers=" + numberOfCrawlers + ", seedPages=" + seedPages
+				+ ", titleSelector=" + titleSelector + ", fullcontentSelector=" + fullcontentSelector
+				+ ", timeSelector=" + timeSelector + ", imgSelector=" + imgSelector + ", urlRegexp=" + urlRegexp
+				+ ", category=" + category + ", tagSelector=" + tagSelector + ", uriRegexp=" + uriRegexp + ", dateFmt="
+				+ dateFmt + "]";
 	}
 
 	public String getId() {
