@@ -28,6 +28,9 @@ public class Article {
 	private String slug;
 
 	@Field
+	private String summary;
+	
+	@Field
 	private String fullcontent;
 	
 	@Field
@@ -139,4 +142,16 @@ public class Article {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+
+	public String getSummary() {
+		return summary;
+	}
+
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+	
+	
 }

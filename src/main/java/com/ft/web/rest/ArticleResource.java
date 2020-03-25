@@ -116,6 +116,27 @@ public class ArticleResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+    
+    /**
+     * {@code GET  /articles} : get all the articles.
+     *
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of articles in body.
+     */
+    @GetMapping("/public/articles")
+    public ResponseEntity<List<Article>> getPublishedArticles(Predicate predicate, Pageable pageable) {
+        log.debug("REST request to get a page of Articles");
+        Page<Article> page = predicate == null ? articleRepository.findAll(pageable) : articleRepository.findAll(predicate, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+    
+    @GetMapping("/public/articles/{id}")
+    public ResponseEntity<Article> getPublishedArticle(@PathVariable String id) {
+        log.debug("REST request to get Article : {}", id);
+        Optional<Article> article = articleRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(article);
+    }
 
     /**
      * {@code GET  /articles/:id} : get the "id" article.

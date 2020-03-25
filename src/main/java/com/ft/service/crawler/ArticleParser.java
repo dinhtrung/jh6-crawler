@@ -158,7 +158,7 @@ public class ArticleParser extends WebCrawler {
 			// Set title
 			String title = titles.get(0).text();
 			entity.setTitle(title);
-
+			
 			// Set slug
 			if (settings.getUriRegexp() != null) {
 				Pattern uriPattern = Pattern.compile(settings.getUriRegexp());
@@ -172,6 +172,17 @@ public class ArticleParser extends WebCrawler {
 			}
 			
 
+			// Summary
+			if (settings.getSummarySelector() != null) {
+				Elements fulltext_content = doc.select(settings.getFullcontentSelector());
+				if (!fulltext_content.isEmpty()) {
+					String summary_html = "";
+					for (Element e : fulltext_content) {
+						summary_html += e.html();
+					}
+					entity.setFullcontent(summary_html);
+				}
+			}
 			// Full content
 			Elements fulltext_content = doc.select(settings.getFullcontentSelector());
 			if (!fulltext_content.isEmpty()) {

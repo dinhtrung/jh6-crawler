@@ -1,7 +1,5 @@
 package com.ft;
 
-import com.ft.config.ApplicationProperties;
-
 import io.github.jhipster.config.DefaultProfileUtil;
 import io.github.jhipster.config.JHipsterConstants;
 import java.net.InetAddress;
@@ -17,6 +15,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.core.env.Environment;
+
+import com.ft.config.ApplicationProperties;
 
 @SpringBootApplication
 @EnableConfigurationProperties({ ApplicationProperties.class })

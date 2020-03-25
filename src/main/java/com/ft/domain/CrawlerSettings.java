@@ -2,9 +2,7 @@ package com.ft.domain;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -29,6 +27,9 @@ public class CrawlerSettings {
 	
 	@Field("title_selector")
 	private String titleSelector = "h1:first-child";
+	
+	@Field("summary_selector")
+	private String summarySelector = ".summary";
 
 	@Field("content_selector")
 	private String fullcontentSelector = "main";
@@ -503,6 +504,15 @@ public class CrawlerSettings {
 	public void setNumberOfCrawlers(int numberOfCrawlers) {
 		this.numberOfCrawlers = numberOfCrawlers;
 	}
+
+	public String getSummarySelector() {
+		return summarySelector;
+	}
+
+	public void setSummarySelector(String summarySelector) {
+		this.summarySelector = summarySelector;
+	}
+
 
 	
 	

@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Example;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.ft.domain.CrawlerSettings;
@@ -38,14 +40,15 @@ public class CrawlerService {
 	@Autowired
 	ApplicationContext appCtx;
 	
-
-	
-//	@Scheduled(fixedDelay = 3600000)
+	/**
+	 * Run all the crawler in every 1 hours
+	 * @throws Exception
+	 */
+	@Scheduled(cron = "0 0 * * * *")
 	public void init() throws Exception {
-//		crawler.run();
-//		for (CrawlerSettings setting : crawlerRepository.findAll(Example.of(new CrawlerSettings().state(200)))) {
-//			doStartCrawler(setting);
-//		}
+		for (CrawlerSettings setting : crawlerRepository.findAll(Example.of(new CrawlerSettings().state(200)))) {
+			doStartCrawler(setting);
+		}
 	}
 
 	public static ConcurrentHashMap<String, CrawlController> activeCrawlers = new ConcurrentHashMap<>();
@@ -92,9 +95,9 @@ public class CrawlerService {
 			
 			activeCrawlers.put(setting.getId(), controller);
 	}
-
+	
 	@Async
-	public void startCrawler() throws Exception {
-//		crawler.run();
+	public void doStopCrawler(String id) {
+		activeCrawlers.get(id).shutdown();
 	}
 }
