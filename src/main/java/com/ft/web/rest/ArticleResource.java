@@ -2,25 +2,18 @@ package com.ft.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,16 +23,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.querydsl.core.types.Predicate;
 import com.ft.domain.Article;
 import com.ft.repository.ArticleRepository;
 import com.ft.security.AuthoritiesConstants;
+import com.ft.service.util.MessageUtils;
 import com.ft.web.rest.errors.BadRequestAlertException;
+import com.querydsl.core.types.Predicate;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -78,6 +70,20 @@ public class ArticleResource {
         if (article.getId() != null) {
             throw new BadRequestAlertException("A new article cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        
+     // Try to calculate of slug that are not exists
+        int i = 0;
+        String slug = MessageUtils.toSlug(article.getTitle());
+        while (articleRepository.findOneBySlug(slug).isPresent()) {
+                i ++;
+                slug = slug + "-" + i;
+        }
+        article.setSlug(slug);
+        if (article.getSrcUrl() == null) {
+        	article.setSrcUrl(slug);
+        }
+
+        
         Article result = articleRepository.save(article);
         return ResponseEntity.created(new URI("/api/articles/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -99,6 +105,18 @@ public class ArticleResource {
         if (article.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        
+        int i = 0;
+        String slug = MessageUtils.toSlug(article.getTitle());
+        while (articleRepository.findOneBySlug(slug).isPresent()) {
+                i ++;
+                slug = slug + "-" + i;
+        }
+        article.setSlug(slug);
+        if (article.getSrcUrl() == null) {
+        	article.setSrcUrl(slug);
+        }
+        
         Article result = articleRepository.save(article);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, article.getId().toString()))
