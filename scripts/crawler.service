@@ -1,0 +1,13 @@
+[Unit]
+Description=Articles Crawler
+After=network-online.target mongod.service
+
+[Service]
+Environment=SPRING_PROFILES_ACTIVE=prod,swagger,deployment
+WorkingDirectory=/srv/crawler
+ExecStart=/usr/bin/java -jar /srv/crawler/crawler.jar
+SuccessExitStatus=143
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

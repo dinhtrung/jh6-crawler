@@ -1,7 +1,9 @@
 package com.ft.domain;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -16,6 +18,9 @@ public class Article {
 	
 	@Field
 	private String title;
+	
+	@Field
+	private int state = 0;
 	
 	@Field
 	@Indexed(unique = true)
@@ -44,6 +49,9 @@ public class Article {
 	
 	@Field
 	private List<String> tags;
+	
+	@Field("meta")
+    private Map<String, Object> meta = new HashMap<String, Object>();
 
 	public Article() {
 		tags = new ArrayList<String>();
@@ -152,6 +160,32 @@ public class Article {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
+
+
+	public int getState() {
+		return state;
+	}
+
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+
+	public Map<String, Object> getMeta() {
+		return meta;
+	}
+
+
+	public void setMeta(Map<String, Object> meta) {
+		this.meta = meta;
+	}
+
+	public Article meta(String key, Object value) {
+		this.meta.put(key, value);
+		return this;
+	}
+
 	
 	
 }
