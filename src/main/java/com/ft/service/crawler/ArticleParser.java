@@ -174,13 +174,9 @@ public class ArticleParser extends WebCrawler {
 
 			// Summary
 			if (settings.getSummarySelector() != null) {
-				Elements fulltext_content = doc.select(settings.getFullcontentSelector());
-				if (!fulltext_content.isEmpty()) {
-					String summary_html = "";
-					for (Element e : fulltext_content) {
-						summary_html += e.html();
-					}
-					entity.setFullcontent(summary_html);
+				Elements summary_elements = doc.select(settings.getFullcontentSelector());
+				if (!summary_elements.isEmpty()) {
+					entity.setSummary(summary_elements.text());
 				}
 			}
 			// Full content
@@ -196,32 +192,20 @@ public class ArticleParser extends WebCrawler {
 			// Set publish time
 			if (settings.getTimeSelector() != null) {
 				Elements time = doc.select(settings.getTimeSelector());
-				Pattern hourPattern = Pattern.compile(settings.getDateFmt());
 				Pattern datePattern = Pattern.compile(settings.getDateFmt());
 				if (!time.isEmpty()) {
-					String timeString = time.get(0).html();
-					logger.info("Found a time string: " + timeString);
+					String timeString = time.get(0).text();
+					logger.debug("Found a time string: {}", timeString);
 					SimpleDateFormat fmt = new SimpleDateFormat(settings.getDateFmt() + " hh:mm");
 					try {
-						Matcher hourMatcher = hourPattern.matcher(timeString);
 						Matcher dateMatcher = datePattern.matcher(timeString);
-	
 						if (dateMatcher.find()) {
-							if (hourMatcher.find()) {
-								String normalizedTimeString = dateMatcher.group() + " " + hourMatcher.group();
-								logger.info("Found normallized timeString: () -- parse with format: {} hh:mm", normalizedTimeString, settings.getDateFmt());
-								entity.setPublishAt(fmt.parse(normalizedTimeString));
-							} else {
-								String normalizedTimeString = dateMatcher.group() + " 00:00";
-								logger.info("Found normallized timeString: () -- parse with format: {} 00:00", normalizedTimeString, settings.getDateFmt());
-								entity.setPublishAt(fmt.parse(dateMatcher.group() + " 00:00"));
-							}
+							entity.setPublishAt(fmt.parse(dateMatcher.group() + " 00:00"));
 						} else {
 							logger.error("Cannot find any date time value with timeString. Please check your configuration..");
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						logger.error("Cannot parse date string" + timeString);
+						logger.error("Cannot parse date string {}", timeString);
 						entity.setPublishAt(new Date());
 					}
 				}

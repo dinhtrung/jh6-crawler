@@ -1,6 +1,10 @@
 package com.ft.service.crawler;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,5 +103,14 @@ public class CrawlerService {
 	@Async
 	public void doStopCrawler(String id) {
 		activeCrawlers.get(id).shutdown();
+	}
+	
+	@PreDestroy
+	public void shutdown() {
+		for (Iterator<Entry<String, CrawlController>> it = activeCrawlers.entrySet().iterator(); it.hasNext(); ) {
+			Entry<String, CrawlController> entry = it.next();
+			entry.getValue().shutdown();
+			activeCrawlers.remove(entry.getKey());
+		}
 	}
 }

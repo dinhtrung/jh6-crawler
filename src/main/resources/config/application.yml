@@ -89,6 +89,9 @@ spring:
       config:
         watch:
           enabled: false
+    loadbalancer:
+      ribbon:
+        enabled: false
   jmx:
     enabled: false
   messages:

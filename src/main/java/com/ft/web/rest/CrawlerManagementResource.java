@@ -25,9 +25,10 @@ public class CrawlerManagementResource {
 	CrawlerSettingsRepository crawlerSettingsRepo;
 	
 	@GetMapping("/stop-crawler/{id}")
-	public ResponseEntity<String> startCrawler(@PathVariable String id) throws Exception {
+	public ResponseEntity<CrawlerSettings> startCrawler(@PathVariable String id) throws Exception {
+		CrawlerSettings settings = crawlerSettingsRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		crawlerService.doStopCrawler(id);
-		return ResponseEntity.accepted().body("OK");
+		return ResponseEntity.accepted().body(settings);
 	}
 	
 	@GetMapping("/start-crawler/{id}")
